@@ -1,0 +1,315 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "RESTful API challenge chapter 8 Binar Academy.",
+		"version": "1.0.0",
+		"title": "Swagger Challenge 8",
+		"contact": {
+			"email": "wirdasuryana@gmail.com"
+		}		
+	},
+	"host": "localhost:5000",
+	"basePath": "/api",
+	"tags": [
+		{
+			"name": "players",
+			"description": "Create Data Player, Read Data Player, Update Profil Player, Delete Data Player."
+		}
+	],
+	"paths": {
+		"/players": {
+			"post": {
+				"tags": [ "players" ],
+				"summary": "create player",
+				"description": "Create Data Player",
+				"consumes": [ "application/json" ],
+				"produces": [ "application/json" ],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "createPlayer",
+						"description": "create new player",
+						"schema": {
+							"$ref": "#/definitions/createPlayer"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "SUCCESS"
+					},
+					"400": {
+						"description": "FAILED username or email or password field cannot be empty."
+					},
+					"500": {
+						"description": "FAILED with error message, or Some error occurred while creating the Player."
+					}
+				}
+			},
+			"get": {
+				"tags": [ "players" ],
+				"summary": "find players",
+				"description": "Find Data Player by Condition",
+				"operationId": "findPlayersByCondition",
+				"produces": [ "application/json" ],
+				"parameters": [
+					{
+						"name": "condition",
+						"in": "query",
+						"description": "Filter Data",
+						"required": true,
+						"type": "array",
+						"items": {
+							"type": "string",
+							"enum": [ "username", "email", "experience", "lvl" ],
+							"default": "username"
+						},
+						"collectionFormat": "multi"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "SUCCESS",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/players"
+							}
+						}
+					},
+					"500": {
+						"description": "Some error occurred while retrieving players."
+					}
+				}
+			}
+		},
+		"/players/{id}": {
+			"get": {
+				"tags": [ "players" ],
+				"summary": "Get player by id",
+				"description": "",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "The id that needs to be fetched. Use 1 for testing.",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "SUCCESS",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/players"
+							}
+						}
+					},
+					"500": {
+						"description": "FAILED, Error retrieving Player with id= id"
+					}
+				}
+			},
+			"put": {
+				"tags": [ "players" ],
+				"summary": "Update a player",
+				"description": "This can only be done by the logged in user.",
+				"operationId": "updatePlayer",
+				"produces": [ "application/json" ],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "id that need to be updated",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "body",
+						"description": "Updated player object",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/players"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "SUCCESS."
+					},
+					"400": {
+						"description": "FAILED, Cannot update Player with id=${id}. Maybe Player was not found or req.body is empty!"
+					},
+					"500": {
+						"description": "FAILED, Error updating Player with id= id"
+					}
+				}
+			},
+			"delete": {
+				"tags": [ "players" ],
+				"summary": "Delete a player",
+				"description": "",
+				"operationId": "deletePlayer",
+				"produces": [ "application/json" ],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Player id to delete",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "SUCCESS"
+					},
+					"400": {
+						"description": "FAILED, Cannot delete Player with id=${id}. Maybe Player was not found!"
+					},
+					"500": {
+						"description": "FAILED, Could not delete Player with id= id"
+					}
+				}
+			}
+		},
+		"/players/exp/{id}": {
+			"post": {
+				"tags": [ "players" ],
+				"summary": "Update player experience",
+				"description": "",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Player id to update experience",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "exp",
+						"description": "Add player experience",
+						"schema": {
+							"type": "object",
+							"required": [ "exp" ],
+							"properties": {
+								"exp": {
+									"type": "integer",
+									"example": 100
+								}
+							}
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "SUCCESS, Player with id=${id} has more experience."
+					},
+					"400": {
+						"description": "FAILED, Cannot update Player with id=${id}!."
+					},
+					"500": {
+						"description": "FAILED, Error updating Player exp with id= id"
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"createPlayer": {
+			"type": "object",
+			"required": [ "username", "email", "password", "experience", "lvl" ],
+			"properties": {
+				"id": {
+					"type": "integer",
+					"example": 1
+				},
+				"username": {
+					"type": "string",
+					"example": "wirda"
+				},
+				"email": {
+					"type": "string",
+					"format": "email",
+					"example": "wirdasuryana@mail.com"
+				},
+				"password": {
+					"type": "string",
+					"format": "encrypt",
+					"example": "admin"
+				},
+				"experience": {
+					"type": "integer",
+					"example": 0
+				},
+				"lvl": {
+					"type": "integer",
+					"example": 0
+				},
+				"createAt": {
+					"type": "string",
+					"format": "date-time",
+					"example": "2022-07-03T09:12:33.001Z"
+				},
+				"updateAt": {
+					"type": "string",
+					"format": "date-time",
+					"example": "2022-07-03T09:12:33.001Z"
+				}
+			}
+		},
+		"players": {
+			"type": "object",
+			"required": [ "username", "email", "experience", "lvl" ],
+			"properties": {
+				"id": {
+					"type": "integer",
+					"example": 1
+				},
+				"username": {
+					"type": "string",
+					"example": "wirda"
+				},
+				"email": {
+					"type": "string",
+					"format": "email",
+					"example": "wirdasuryana@gmail.com"
+				},
+				"password": {
+					"type": "string",
+					"format": "encrypt",
+					"example": "admin"
+				},
+				"experience": {
+					"type": "integer",
+					"example": 0
+				},
+				"lvl": {
+					"type": "integer",
+					"example": 0
+				},
+				"createAt": {
+					"type": "string",
+					"format": "date-time",
+					"example": "2022-07-03T09:12:33.001Z"
+				},
+				"updateAt": {
+					"type": "string",
+					"format": "date-time",
+					"example": "2022-07-03T09:12:33.001Z"
+				}
+			}
+		}
+	},
+	"securityDefinitions": {
+		"api_key": {
+			"type": "apiKey",
+			"name": "api_key",
+			"in": "header"
+		}
+	}
+}
